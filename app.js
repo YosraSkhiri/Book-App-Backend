@@ -18,6 +18,9 @@ connection.once('open', () => {
     console.log('mongo DB success');
 });
 
+const bookRouter = require('./routes/books');
+app.use('/books', bookRouter);
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 })
