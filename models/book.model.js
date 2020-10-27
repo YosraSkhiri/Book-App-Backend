@@ -3,16 +3,15 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const bookSchema = new Schema({
-    name: {
+    title: {
         type: String,
         required: true,
         trim: true
     },
-    
-    author: {
+
+    cover: {
         type: String,
-        required: true,
-        trim: true
+        required: true
     },
 
     description: {
@@ -21,10 +20,26 @@ const bookSchema = new Schema({
         trim: true
     },
 
-    language: {
+    summary: {
         type: String,
         required: true,
         trim: true
+    },
+
+    release_date: {
+        type: String
+    },
+
+    language: {
+        type: String
+    },
+
+    type_ids: {
+        type: Array
+    },
+
+    author_ids: {
+        type: Array
     }
 });
 
