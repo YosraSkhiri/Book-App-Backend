@@ -13,11 +13,7 @@ const authorSchema = new Schema({
         type: String
     },
 
-    birth_date: {
-        type: String
-    },
-
-    nationality: {
+    birthdate: {
         type: String
     }
 });
