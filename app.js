@@ -20,8 +20,10 @@ connection.once('open', () => {
 
 const bookRouter = require('./routes/books');
 const authorRouter = require('./routes/authors');
+const categoryRouter = require('./routes/category');
 app.use('/books', bookRouter);
 app.use('/authors', authorRouter);
+app.use('/categories', categoryRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)

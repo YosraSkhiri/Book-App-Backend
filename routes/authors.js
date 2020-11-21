@@ -27,7 +27,11 @@ let upload = multer({ storage, fileFilter });
 router.route('/add').post(upload.single('photo'), (req, res) => {
     const name = req.body.name;
     const birthdate = req.body.birthdate;
-    const photo = req.file.filename;
+    const photo = '';
+
+    if(req.file) {
+        photo = req.file.filename
+    }
 
     const newAuthorData = {
         name,
