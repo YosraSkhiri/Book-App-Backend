@@ -5,16 +5,20 @@ router.route('/add').post((req, res) => {
     const category = req.body.category;
     const newCategory = new Category({ category });
 
+    if(!category) {
+        return res.status(400).json({msg: 'Enter a category first.'});
+    }
+
     Category.exists({ category }, function(err, doc){
         if(err) {
-            console.log(err);
+            return res.status(400).json('Error: ' + err);
         }else {
             if(!doc) {
-                newCategory.save()
-                            .then(() => res.json('Category Added!'))
+                return newCategory.save()
+                            .then(() => res.json({msg: 'the '+ category +' category is added!'}))
                             .catch(err => res.status(400).json('Error: ' + err));
             } else {
-                console.log("this category already exists");
+                return res.status(400).json({msg: 'this category already exists'});
             }
         }
     });
