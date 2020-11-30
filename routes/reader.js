@@ -42,15 +42,32 @@ router.route('/register').post((req, res) => {
     }
 
     Reader.findOne({ email: email }, (err, data) => {     
-        if(data) {
-            return res.status(400).json("msg: This email has been already used.");
+        if(err) {
+            return res.status(400).json({
+                msg: 'Something went wrong! try again later!'
+            });
         }
-    });
-    
-    bcrypt.genSalt(8, function(err, salt) {
-        try {
-            bcrypt.hash(password, salt, function(err, hash) {
-                try {
+
+        if(data) {
+            return res.status(400).json({
+                msg: 'This email has been already used.'
+            });
+            
+        } else {
+            bcrypt.genSalt(8, function(err, salt) {
+                if(err) {
+                    return res.status(400).json({
+                        msg: 'Something went wrong! try again later!'
+                    });
+                }
+        
+                bcrypt.hash(password, salt, function(err, hash) {
+                    if(err) {
+                        return res.status(400).json({
+                            msg: 'Something went wrong! try again later!'
+                        });
+                    }
+        
                     const newReader = new Reader({
                         first_name,
                         last_name,
@@ -58,19 +75,15 @@ router.route('/register').post((req, res) => {
                         password: hash
                     });
                 
-                    newReader.save()
-                             .then(() => res.json('Account is created!'))
-                             .catch(err => res.status(400).json('Error: ' + err));
-                } catch(err) {
-
-                }       
+                    return newReader.save()
+                                .then(() => res.json({msg: 'Account is created!'}))
+                                .catch(err => res.status(400).json('Error: ' + err));
+                        
+                });
             });
-        } catch (err) {
-
         }
-        
     });
-
+    
 });
 
 /*router.route('/login').post((req, res) => {
