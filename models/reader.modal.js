@@ -4,8 +4,7 @@ const Schema = mongoose.Schema;
 
 const readerSchema = new Schema({
     username: {
-        type: String,
-        required: true
+        type: String
     },
 
     first_name: {
@@ -16,13 +15,20 @@ const readerSchema = new Schema({
         type: String
     },
 
-    photo,
-
-    email: {
+    photo: {
         type: String
     },
 
+    email: {
+        type: String,
+        unique: true
+    },
+
     password: {
-        type: String
+        type: String,
+        minlength: 6
     }
 });
+
+const Reader = mongoose.model('Reader', readerSchema);
+module.exports = Reader;

@@ -12,9 +12,11 @@ app.use(express.json());
 const bookRouter = require('../routes/books');
 const authorRouter = require('../routes/authors');
 const categoryRouter = require('../routes/category');
+const readerRouter = require('../routes/reader');
 app.use('/books', bookRouter);
 app.use('/authors', authorRouter);
 app.use('/categories', categoryRouter);
+app.use('/readers', readerRouter);
 
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
