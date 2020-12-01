@@ -18,6 +18,8 @@ app.use('/authors', authorRouter);
 app.use('/categories', categoryRouter);
 app.use('/readers', readerRouter);
 
+app.use(express.static('public'))
+
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`)
 });
