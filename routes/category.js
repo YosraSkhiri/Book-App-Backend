@@ -24,4 +24,22 @@ router.route('/add').post((req, res) => {
     });
 });
 
+router.route('/').get((req, res) => {
+    Category.find()
+            .then(categories => res.json(categories))
+            .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/search').get((req, res) => {
+    const category = req.query.category;
+    let regex = new RegExp(category,'i');
+    return Category.find({
+        $or: [
+        {'category': regex}
+     ]
+    }).limit(4)
+            .then(categories => res.json(categories))
+            .catch(err => res.status(400).json('Error: ' + err));
+});
+
 module.exports = router;
