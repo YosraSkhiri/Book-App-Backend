@@ -46,6 +46,13 @@ router.route('/add').post(upload.single('photo'), (req, res) => {
              .catch(err => res.status(400).json({msg: err}));
 });
 
+router.route('/:name/:id').get((req, res) => {
+    const authorId = req.params.id;
+    return Author.findOne().where({_id: authorId})
+                 .then(author => res.json(author))
+                 .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.route('/search').get((req, res) => {
     const author = req.query.author;
     let regex = new RegExp(author,'i');
