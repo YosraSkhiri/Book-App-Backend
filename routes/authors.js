@@ -14,7 +14,7 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+    let allowedFileTypes = ['image/jpeg', 'image/jpg', 'image/png'];
     if(allowedFileTypes.includes(file.mimetype)) {
         cb(null, true);
     } else {
@@ -22,12 +22,12 @@ const fileFilter = (req, file, cb) => {
     }
 }
 
-let upload = multer({ storage, fileFilter });
+const upload = multer({ storage, fileFilter });
 
 router.route('/add').post(upload.single('photo'), (req, res) => {
     const name = req.body.name;
     const birthdate = req.body.birthdate;
-    const photo = '';
+    let photo = '';
 
     if(req.file) {
         photo = req.file.filename
@@ -41,9 +41,21 @@ router.route('/add').post(upload.single('photo'), (req, res) => {
 
     const newAuthor = new Author(newAuthorData);
 
-    newAuthor.save()
+    return newAuthor.save()
              .then(() => res.json('Author Added'))
-             .catch(err => res.status(400).json('Error: ' + err));
+             .catch(err => res.status(400).json({msg: err}));
+});
+
+router.route('/search').get((req, res) => {
+    const author = req.query.author;
+    let regex = new RegExp(author,'i');
+    return Author.find({
+        $or: [
+        {'name': regex}
+     ]
+    }).limit(4)
+      .then(authors => res.json(authors))
+      .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;
