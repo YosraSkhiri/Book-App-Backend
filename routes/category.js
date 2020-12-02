@@ -25,7 +25,7 @@ router.route('/add').post((req, res) => {
 });
 
 router.route('/').get((req, res) => {
-    Category.find()
+    Category.find().collation({locale: "en" }).sort({category:'asc'})
             .then(categories => res.json(categories))
             .catch(err => res.status(400).json('Error: ' + err));
 });
