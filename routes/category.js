@@ -25,7 +25,14 @@ router.route('/add').post((req, res) => {
 });
 
 router.route('/').get((req, res) => {
-    Category.find().collation({locale: "en" }).sort({category:'asc'})
+    if(req.query.typeIds) {
+        const categoryIds = req.query.typeIds.split(',');
+        return Category.find().where('_id').in(categoryIds)
+            .then(categories => res.json(categories))
+            .catch(err => res.status(400).json('Error: ' + err));
+    }
+    
+    return Category.find().collation({locale: "en" }).sort({category:'asc'})
             .then(categories => res.json(categories))
             .catch(err => res.status(400).json('Error: ' + err));
 });

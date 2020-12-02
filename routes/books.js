@@ -42,6 +42,13 @@ router.route('/search').get((req, res) => {
       .catch(err => res.status(400).json('Error: ' + err));
 });
 
+router.route('/:name/:id').get((req, res) => {
+    const bookId = req.params.id;
+    return Book.findOne().where({_id: bookId})
+                 .then(book => res.json(book))
+                 .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.route('/add').post(upload.single('cover'), (req, res) => {
     const title = req.body.title;
     const author_ids = req.body.authors;

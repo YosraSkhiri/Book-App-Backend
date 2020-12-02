@@ -66,7 +66,15 @@ router.route('/search').get((req, res) => {
 });
 
 router.route('/').get((req, res) => {
-    Author.find().collation({locale: "en" }).sort({name:'asc'})
+    if(req.query.authorIds) {
+        const authorIds = req.query.authorIds.split(',');
+
+        return Author.find().where('_id').in(authorIds)
+            .then(authors => res.json(authors))
+            .catch(err => res.status(400).json('Error: ' + err));
+    }
+
+    return Author.find().collation({locale: "en" }).sort({name:'asc'})
             .then(authors => res.json(authors))
             .catch(err => res.status(400).json('Error: ' + err));
 });
