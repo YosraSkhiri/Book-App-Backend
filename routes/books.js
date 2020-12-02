@@ -25,9 +25,22 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage, fileFilter });
 
 router.route('/').get((req, res) => {
-    Book.find()
-        .then(books => res.json(books))
-        .catch(err => res.status(400).json('Error: ' + err));
+    if(req.query.category) {
+        const TypeId = req.query.category;
+        let regex = new RegExp(TypeId,'i');
+        return Book.find(
+            {
+                $or: [
+                {'type_ids': regex}
+             ]
+            }
+        )
+            .then(books => res.json(books))
+            .catch(err => res.status(400).json('Error: ' + err));
+    }
+    return Book.find()
+            .then(books => res.json(books))
+            .catch(err => res.status(400).json('Error: ' + err));
 });
 
 router.route('/search').get((req, res) => {
