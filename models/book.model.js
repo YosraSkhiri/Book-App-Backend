@@ -14,12 +14,6 @@ const bookSchema = new Schema({
         required: true
     },
 
-    description: {
-        type: String,
-        required: true,
-        trim: true
-    },
-
     summary: {
         type: String,
         required: true,
@@ -30,16 +24,12 @@ const bookSchema = new Schema({
         type: String
     },
 
-    language: {
+    type_ids: {
         type: String
     },
 
-    type_ids: {
-        type: Array
-    },
-
     author_ids: {
-        type: Array
+        type: String
     }
 });
 
