@@ -6,7 +6,7 @@ let Author = require('../models/author.modal');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'images');
+        cb(null, 'public/images/authors');
     },
     filename: function(req, file, cb) {   
         cb(null, uuidv4() + '-' + Date.now() + path.extname(file.originalname));
@@ -63,6 +63,12 @@ router.route('/search').get((req, res) => {
     }).limit(4)
       .then(authors => res.json(authors))
       .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/').get((req, res) => {
+    Author.find().collation({locale: "en" }).sort({name:'asc'})
+            .then(authors => res.json(authors))
+            .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;
