@@ -6,7 +6,7 @@ let Book = require('../models/book.model');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'images');
+        cb(null, 'public/images/books');
     },
     filename: function(req, file, cb) {   
         cb(null, uuidv4() + '-' + Date.now() + path.extname(file.originalname));
@@ -30,7 +30,6 @@ router.route('/').get((req, res) => {
         .catch(err => res.status(400).json('Error: ' + err));
 });
 
-
 router.route('/search').get((req, res) => {
     const book = req.query.book;
     let regex = new RegExp(book,'i');
@@ -45,8 +44,17 @@ router.route('/search').get((req, res) => {
 
 router.route('/add').post(upload.single('cover'), (req, res) => {
     const title = req.body.title;
-    const authors = req.body.authors;
-    const description = req.body.description;
+    const author_ids = req.body.authors;
+    const type_ids = req.body.categories;
+    const summary = req.body.summary;
+    const release_date = req.body.release_date;
+
+    if(!title || !author_ids || !type_ids || !summary || !release_date) {
+        return res.status(400).json({
+            msg: 'All fields are required!'
+        });
+    }
+    
     let cover = '';
 
     if(req.file) {
@@ -55,15 +63,17 @@ router.route('/add').post(upload.single('cover'), (req, res) => {
 
     const newBookData = {
         title,
-        authors,
-        description,
-        cover      
+        author_ids,
+        type_ids,
+        summary,
+        cover,
+        release_date      
     }
-
+    
     const newBook = new Book(newBookData);
 
-    newBook.save()
-            .then(() => res.json('Book Added'))
+    return newBook.save()
+            .then(() => res.json({msg: 'Book Added'}))
             .catch(err => res.status(400).json('Error: ' + err));
 });
 
