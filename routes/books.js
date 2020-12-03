@@ -3,6 +3,7 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 let path = require('path');
 let Book = require('../models/book.model');
+const Comment = require('../models/comment.modal');
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
@@ -95,6 +96,13 @@ router.route('/add').post(upload.single('cover'), (req, res) => {
     return newBook.save()
             .then(() => res.json({msg: 'Book Added'}))
             .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/comments').get((req, res) => {
+    const bookId = req.query.id;
+    return Comment.find().where({book_id: bookId}).sort({date: 'desc'})
+                 .then(comments => res.json(comments))
+                 .catch(err => res.status(400).json('Error: ' + err));
 });
 
 module.exports = router;

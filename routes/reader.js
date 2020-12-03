@@ -1,7 +1,11 @@
 const router = require('express').Router();
 const Reader = require('../models/reader.modal');
+const ReadingList = require('../models/readingList.modal');
+const Comment = require('../models/comment.modal');
+const Rating = require('../models/rating.modal');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const verifyToken = require('./verifyToken');
 
 router.route('/register').post((req, res) => {
     
@@ -111,7 +115,8 @@ router.route('/login').post((req, res) => {
 
                 if(result){
                     jwt.sign({ id: data._id }, process.env.TOKEN_SECRET, (err, token) => {
-                        res.header('auth-token', token).send(token);
+                        //res.header('auth-token', token).send(token);
+                        return res.cookie('token', token, {httpOnly: true}).cookie('isLogged', 'true').json({msg: 'logged in!'});
                     });
 
                 } else {
@@ -123,5 +128,107 @@ router.route('/login').post((req, res) => {
         }
     });
 });
+
+router.route('/readinglist').get(verifyToken, (req, res) => {
+    readerId = req.user;
+    return ReadingList.find().where({reader_id: readerId})
+                .then(books => res.json(books))
+                .catch(err => res.status(400).json('Error: ' + err));
+
+});
+
+router.route('/bookmark').post(verifyToken, (req, res) => {
+    readerId = req.user;
+    bookId = req.body.bookId;
+    cover = req.body.cover;
+    title = req.body.title;
+
+    const newBookmark = new ReadingList({
+        book_id: bookId,
+        reader_id: readerId,
+        cover: cover,
+        title: title
+    });
+
+    ReadingList.exists({book_id: bookId, reader_id: readerId}, function(err, doc){
+        if(err) {
+            return res.status(400).json('Error: ' + err);
+        }else {
+            if(!doc) {
+                return newBookmark.save()
+                    .then(() => res.json({msg: 'Bookmark added.'}))
+                    .catch(err => res.status(400).json({msg: 'Something went wrong, Please try again later!'}));
+            } else {
+                return res.status(400).json({msg: 'this Bookmark already exists'});
+            }
+        }
+    });
+
+});
+
+router.route('/').get(verifyToken, (req, res) => {
+    readerId = req.user;
+    return Reader.findOne().where({_id: readerId}).select('first_name')
+                .then(reader => res.json(reader))
+                .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/logout').get(verifyToken, (req, res) => {
+    res.clearCookie('token', {httpOnly: true});
+    res.clearCookie('isLogged');
+    return res.status(200).json({msg: ''});
+});
+
+router.route('/comment').post(verifyToken, (req, res) => {
+    readerId = req.user;
+
+    Reader.findOne().where({_id: readerId})
+    .then(reader => {
+
+        const newComment = new Comment({
+            book_id: req.body.bookId,
+            comment: req.body.comment,
+            reader_id: readerId,
+            first_name: reader.first_name,
+            last_name: reader.last_name,
+        });
+    
+        newComment.save()
+                    .then(() => {
+                        res.json({msg: 'Comment successfully added.'})})
+                    .catch(err => res.status(400).json('Error: ' + err));
+
+    }).catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/rating').post(verifyToken, (req, res) => {
+    readerId = req.user;
+
+        const newRating = new Rating({
+            book_id: req.body.bookId,
+            value: req.body.value,
+            reader_id: readerId
+        });
+
+        Rating.exists({book_id: req.body.bookId, reader_id: readerId}, function(err, doc){
+        if(err) {
+            return res.status(400).json('Error: ' + err);
+        }else {
+            if(!doc) {
+                return newRating.save()
+                    .then(() => res.json({msg: 'Rating added.'}))
+                    .catch(err => res.status(400).json('Error: ' + err));
+            } else {
+                /*return doc.update({value: req.body.value})
+                    .then(() => res.json({msg: 'Rating added.'}))
+                    .catch(err => res.status(400).json('Error: ' + err));*/
+            }
+        }
+    });
+
+});
+
+
+
 
 module.exports = router;
