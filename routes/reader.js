@@ -137,6 +137,15 @@ router.route('/readinglist').get(verifyToken, (req, res) => {
 
 });
 
+router.route('/readinglist/delete').post(verifyToken, (req, res) => {
+    readerId = req.user;
+    bookId = req.body.bookId;
+
+    return ReadingList.deleteOne({ reader_id: readerId, book_id: bookId })
+                .then(() => res.json({msg: 'book removed'}))
+                .catch(err => res.status(400).json('Error: ' + err));
+});
+
 router.route('/bookmark').post(verifyToken, (req, res) => {
     readerId = req.user;
     bookId = req.body.bookId;
@@ -216,12 +225,12 @@ router.route('/rating').post(verifyToken, (req, res) => {
         }else {
             if(!doc) {
                 return newRating.save()
-                    .then(() => res.json({msg: 'Rating added.'}))
+                    .then(() => res.json({msg: 'You rated this book ' + newRating.value + ' stars.'}))
                     .catch(err => res.status(400).json('Error: ' + err));
             } else {
-                /*return doc.update({value: req.body.value})
-                    .then(() => res.json({msg: 'Rating added.'}))
-                    .catch(err => res.status(400).json('Error: ' + err));*/
+                return Rating.findOne({book_id: req.body.bookId, reader_id: readerId}).updateOne({value: req.body.value})
+                    .then(() => res.json({msg: 'You changed your rating to ' + newRating.value + ' stars.'}))
+                    .catch(err => res.status(400).json('Error: ' + err));
             }
         }
     });
