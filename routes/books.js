@@ -70,6 +70,8 @@ router.route('/add').post(upload.single('cover'), (req, res) => {
     const summary = req.body.summary;
     const release_date = req.body.release_date;
 
+
+
     if(!title || !author_ids || !type_ids || !summary || !release_date) {
         return res.status(400).json({
             msg: 'All fields are required!'
