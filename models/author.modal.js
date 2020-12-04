@@ -10,11 +10,15 @@ const authorSchema = new Schema({
     }, 
 
     photo: {
-        type: String
+        type: String,
+        required: true,
+        trim: true
     },
 
     birthdate: {
-        type: String
+        type: String,
+        required: true,
+        trim: true
     }
 });
 

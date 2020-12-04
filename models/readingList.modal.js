@@ -4,19 +4,23 @@ const Schema = mongoose.Schema;
 
 const readingListSchema = new Schema({
     book_id: {
-        type: String
+        type: String,
+        required: true
     },
 
     title: {
-        type: String
+        type: String,
+        required: true
     },
 
     cover: {
-        type: String
+        type: String,
+        required: true
     },
 
     reader_id: {
-        type: String
+        type: String,
+        required: true
     },
 });
 

@@ -4,20 +4,26 @@ const Schema = mongoose.Schema;
 
 const ratingSchema = new Schema({
     value: {
-        type: Number
+        type: Number,
+        max: 5,
+        min: 1,
+        required: true
     },
 
     book_id: {
-        type: String
+        type: String,
+        required: true
     },
 
     reader_id: {
-        type: String
+        type: String,
+        required: true
     },
 
     date: {
         type: Date,
-        default: Date.now()
+        default: Date.now(),
+        required: true
     }
 });
 

@@ -8,11 +8,13 @@ const readerSchema = new Schema({
     },
 
     first_name: {
-        type: String
+        type: String,
+        required: true
     },
 
     last_name: {
-        type: String
+        type: String,
+        required: true
     },
 
     photo: {
@@ -21,12 +23,14 @@ const readerSchema = new Schema({
 
     email: {
         type: String,
-        unique: true
+        unique: true,
+        required: true
     },
 
     password: {
         type: String,
-        minlength: 6
+        minlength: 6,
+        required: true
     }
 });
 

@@ -21,15 +21,18 @@ const bookSchema = new Schema({
     },
 
     release_date: {
-        type: String
+        type: String,
+        required: true
     },
 
     type_ids: {
-        type: String
+        type: String,
+        required: true
     },
 
     author_ids: {
-        type: String
+        type: String,
+        required: true
     }
 });
 
