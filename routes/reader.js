@@ -115,8 +115,13 @@ router.route('/login').post((req, res) => {
 
                 if(result){
                     jwt.sign({ id: data._id }, process.env.TOKEN_SECRET, (err, token) => {
-                        //res.header('auth-token', token).send(token);
-                        return res.cookie('token', token, {httpOnly: true}).cookie('isLogged', 'true').json({msg: 'logged in!'});
+                        if(err) {
+                            return res.status(400).json({msg: 'Something went wrong! Please try again later.'})
+                        }
+                        
+                        return res.cookie('token', token, {httpOnly: true})
+                                  .cookie('isLogged', 'true')
+                                  .json({msg: 'logged in!'});
                     });
 
                 } else {
