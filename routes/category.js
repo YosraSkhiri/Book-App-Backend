@@ -32,7 +32,7 @@ router.route('/').get((req, res) => {
             .catch(err => res.status(400).json('Error: ' + err));
     }
     
-    return Category.find().collation({locale: "en" }).sort({category:'asc'})
+    return Category.find().collation({locale: "en", strength: 1 }).sort({category:'asc'})
             .then(categories => res.json(categories))
             .catch(err => res.status(400).json('Error: ' + err));
 });
